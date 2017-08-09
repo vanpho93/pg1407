@@ -9,11 +9,12 @@ const pool = new pg.Pool({
     max: 20
 });
 
-pool.connect((err, client, done) => {
-    if (err) return console.log(err.message);
-    client.query('SELECT * FROM "Product"', (errQuery, result) => {
-        if (errQuery) return console.log(errQuery.message);
-        console.log(result.rows[0]);
-        done(errQuery);
+function queryDb(sql, cb) {
+    pool.connect((err, client, done) => {
+        if (err) return console.log(err.message);
+        client.query(sql, (errQuery, result) => {
+            done(errQuery);
+            cb(errQuery, result);
+        });
     });
-});
+}
